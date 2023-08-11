@@ -1,5 +1,5 @@
 TGTURL="$1"
-curl $TGTURL > /tmp/container_response_body.html
+curl -L $TGTURL > /tmp/container_response_body.html
 if [ $? -ne 0 ] ; then
 	echo " <!-- probably not really html serving --> " > /tmp/container_summary.html
 else
