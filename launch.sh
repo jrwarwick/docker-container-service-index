@@ -1,5 +1,7 @@
 #!/usr/bin/sh
 
+docker stop docker-server-portsmania
+docker rm docker-server-portsmania
 #HOST Net inspection needs to happen above the docker container context. Too much security isolation once in docker context.
 #so, this python script does the inspection, parsing, and generates a static index file  and then kicks off simple docker container to serve it up.
 python3 ./basic/docker_ports_autolist.py

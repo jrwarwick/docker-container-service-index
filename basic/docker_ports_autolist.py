@@ -10,6 +10,7 @@ import re
 # finally, throw up a docker image of our own to serve up the fancy index 
 
 # https://xael.org/pages/python-nmap-en.html
+tooldir = os.path.split(os.path.realpath(__file__))[0]
 
 stuff = ""
 
@@ -17,14 +18,16 @@ stuff = ""
 proc = subprocess.run([ 'docker','ps','--format','"{{.Names}}:  {{.Image}}\t{{.Ports}}"'], capture_output=True, text=True)
 httpURLs = []
 raw = proc.stdout
+print("__RAW__\n")
 print(raw.split("\n"))
+print("__  ____\n")
 for line in raw.split("\n"):
     #print("\n\t"+line)
     tokens = line.split("\t")
     container_name = tokens[0].replace('"',"")
-    print(container_name)
+    print("# " + container_name)
     for token in tokens[1:]:
-        print("\t\t"+token)
+        print("\t"+token)
         for item in token.split(","):
             if "0.0.0.0" in item:
                 urlish = item.replace("0.0.0.0","http://"+socket.getfqdn())
@@ -36,20 +39,26 @@ for line in raw.split("\n"):
                     print("\t\tservice: "+service)
                     if service == "21":
                         urlish = urlish.replace("http://","ftp://")
+                    if service == "22":
+                        urlish = urlish.replace("http://","ssh://")
                     else:
                         httpURLs.append(urlish)
                 except OSError:
                     # default to http.
                     print("\t\t(service default)")
-                print("\t\t"+urlish)
+                print("\t\tURL-ish: "+urlish)
                 clickable = '<a href="%s">%s</a>'%(urlish,container_name+" - "+portpart)
                 print(clickable)
-                proc = subprocess.run([ 'sh','extracto.sh',urlish], capture_output=True, text=True)
+
+                probe_proc = subprocess.run([ 'sh',tooldir+'/extracto.sh',urlish], capture_output=True, text=True)
+                print(probe_proc.stdout)
+                print(probe_proc.stderr)
                 with open('/tmp/container_summary.html', 'r', encoding='utf-8') as f:
                     extrasummary = f.read()
                     f.close()
-                print("\n\n" + extrasummary + "\n\n")
+                print("\n" + extrasummary + "\n\n")
                 stuff += "\t<li>"+clickable+extrasummary+"</li>\n"
+                os.remove('/tmp/container_summary.html')
         
 dumplet='''
 <!doctype html>
