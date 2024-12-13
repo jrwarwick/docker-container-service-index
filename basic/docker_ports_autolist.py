@@ -64,16 +64,19 @@ dumplet='''
 <!doctype html>
 <html>
 <head>
-    <meta charset="utf-8"/><title>AutoLinks for Docker Containers</title>
-    <style>
-        body { padding: .5em; font-family: system-ui; background-color:lightgrey;}
-        li { 
-            padding: .75em; 
-            border-bottom: 1px solid #AAA;
-            list-style-type: none;
-        }
-        img { width: 1.75em; height: 1.75em; margin-bottom: -.25em;}
-    </style>
+        <meta charset="utf-8"/><title>AutoLinks for Docker Containers</title>
+        <style>
+                body { padding: .5em; font-family: system-ui; background-color:silver;}
+                li {
+                        padding: .75em;
+                        border-bottom: 1px solid #AAA;
+                        list-style-type: none;
+                        background-color:lightgrey;
+                        box-shadow: 3px 3px 4px 4px rgba(20, 20, 120, .1);
+                        width: 50%%;
+                }
+                img { width: 1.75em; height: 1.75em; margin-bottom: -.25em;}
+        </style>
 </head>
 <body> <ul> %s </ul> </body>
 </html>
