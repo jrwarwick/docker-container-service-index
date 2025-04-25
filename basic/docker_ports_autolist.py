@@ -12,6 +12,14 @@ import re
 # https://xael.org/pages/python-nmap-en.html
 tooldir = os.path.split(os.path.realpath(__file__))[0]
 
+##docker ps --format "table {{.Label \"com.docker.compose.project\"}}" 
+proc = subprocess.run([ 'docker','ps','--format','table {{.Label "com.docker.compose.project"}}'], capture_output=True, text=True)
+raw = proc.stdout
+print(f"__RAW__\n{raw}\n____\n")
+projects=list(set(raw.split("\n")))
+print(projects)
+project_list = "<br/>\n".join(projects)
+
 stuff = ""
 
 #'docker ps --format "{{.Names}}__{{.Image}}\t{{.Ports}}"'
@@ -41,6 +49,10 @@ for line in raw.split("\n"):
                         urlish = urlish.replace("http://","ftp://")
                     if service == "22":
                         urlish = urlish.replace("http://","ssh://")
+                    if service == "445":
+                        urlish = urlish.replace("http://","smb://")
+                        #TODO: should this be file:// instead?
+                        #TODO: probe root shares?
                     else:
                         httpURLs.append(urlish)
                 except OSError:
@@ -59,34 +71,44 @@ for line in raw.split("\n"):
                 print("\n" + extrasummary + "\n\n")
                 stuff += "\t<li>"+clickable+extrasummary+"</li>\n"
                 os.remove('/tmp/container_summary.html')
-        
-dumplet='''
+
+with open("banner.txt", 'r') as banner_file:
+    banner_text = banner_file.read()
+
+dumplet=f"""
 <!doctype html>
 <html>
 <head>
         <meta charset="utf-8"/><title>AutoLinks for Docker Containers</title>
         <style>
-                body { padding: .5em; font-family: system-ui; background-color:silver;}
-                li {
+                body {{ padding: .5em; font-family: system-ui; background-color:silver;}}
+                li {{
                         padding: .75em;
                         border-bottom: 1px solid #AAA;
                         list-style-type: none;
                         background-color:lightgrey;
                         box-shadow: 3px 3px 4px 4px rgba(20, 20, 120, .1);
                         width: 50%%;
-                }
-                img { width: 1.75em; height: 1.75em; margin-bottom: -.25em;}
+                        min-width: 40em;
+                }}
+                img {{ width: 1.75em; height: 1.75em; margin-bottom: -.25em;}}
         </style>
 </head>
-<body> <ul> %s </ul> </body>
+<body> 
+    <a href="docker_cli_cheat_sheet.html">Docker CLI Cheat Sheet Quick Ref</a>
+    <ul> {stuff} </ul> 
+    <div>{project_list}</div>
+    <pre>{banner_text}</pre>
+</body>
 </html>
-'''%stuff
+"""
 
 f = open('docker_auto_links.html', 'wt', encoding='utf-8')
 f.write(dumplet)
 f.close()
 
 
+#Materials prepared, launch container!
 ps = subprocess.run(['docker','ps','--filter=name=docker-server-portsmania'], capture_output=True, text=True)
 print ("already running? " + ps.stdout)
 len(re.findall("portmania", ps.stdout ))
@@ -98,7 +120,11 @@ else:
 
 #docker run -p 80:80 -v $PWD/docker_auto_links.html:/usr/share/caddy/index.html
 print("docker run -p 80:80 -v $PWD/docker_auto_links.html:/usr/share/caddy/index.html")
-proc = subprocess.run([ 'docker','run','--name=docker-server-portsmania','-d','-p','80:80','-v',os.getcwd()+'/docker_auto_links.html:/usr/share/caddy/index.html','caddy' ] , capture_output=True, text=True)
+proc = subprocess.run([ 'docker','run','--name=docker-server-portsmania','-d','-p','80:80',
+                       '-v',os.getcwd()+'/docker_auto_links.html:/usr/share/caddy/index.html',
+                       '-v',os.getcwd()+'/docker_cli_cheat_sheet.html:/usr/share/caddy/docker_cli_cheat_sheet.html',
+                       'caddy' 
+                       ] , capture_output=True, text=True)
 ##with open("/tmp/docker_auto_links_output.log", "a") as output:
         ##subprocess.call("docker run -p 80:80 -v $PWD/docker_auto_links.html:/usr/share/caddy/index.html caddy", shell=True, stdout=output, stderr=output)
 print (proc.stdout)

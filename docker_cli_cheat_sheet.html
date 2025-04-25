@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker CLI Quick Reference</title>
+  <style>
+    @font-face { font-family:"FiraCodeRegular";
+	    src: url("FiraCode-VariableFont_wght.ttf");hi format('truetype');
+    }
+    body {
+  	font-family: 'FiraCodeRegular','Cascadia Code', Arial, sans-serif;
+      font-weight: normal;
+	 font-style: normal;
+      margin: 0em;
+      padding: 0em .5em .5em .5em;
+      line-height: 1.25;
+    }
+    h1, h2 {
+      color: #679;
+  	font-family: 'FiraCodeRegular','Cascadia Code', Arial, sans-serif;
+    }
+    h1 {
+      font-size: 1.825em;
+      margin: .5em;
+    }
+    h1 > svg {
+	    width:2.25em; height:2.25em;
+	    margin-bottom: -.66em;
+	    border: 4px solid #f0f0f2;
+    }
+    h2 {
+      font-size: 1.05em;
+      margin-top: .5em;
+      margin-bottom: 0em;
+      padding-bottom:0em;
+    }
+    h2.zow {
+	        background-color: slategrey;
+		color:#eef;
+		    transform: skew(-16deg);
+		display: inline-block;
+		    padding: .25em 1.5em .1em 1em;
+		    margin: -.25em 0 0 -.1em;
+		    border-radius: .1em;
+    }
+    h3 { font-size: .95em;
+	    margin:.5em 0em 0em 0em;padding:0;
+	    font-weight:400;
+
+    }
+    div.section {
+	    border: 2px solid #f0f0f2;
+		    border-radius: .25em;
+		    margin-top:1.5em;
+	}
+    .section > p {
+	    margin:0 0 .75em 0; padding:0;
+    }
+    code {
+      background: #f7f8fa;
+      padding: .25em 1em .25em 1em;
+      display: flex;
+      /* border: 1px solid #dde; */
+       /* white-space:pre-line; */
+        page-break-inside: avoid;
+      overflow-x: auto;
+      font-family: "FiraCodeRegular",'Cascadia Code',"Courier New", Courier, monospace;
+      font-size:.9em;
+      font-weight: 500;
+    }
+    i {
+	    color:#336;
+	    font-weight:500;
+    }
+     em {
+	    color:#151;
+	    font-style:none;
+    }
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>
+	<svg xmlns="http://www.w3.org/2000/svg"
+		aria-label="Docker" role="img"
+		viewBox="0 0 512 512"><rect
+		width="512" height="512"
+		rx="15%"
+		fill="#ffffff"/><path stroke="#066da5" stroke-width="38" d="M296 226h42m-92 0h42m-91 0h42m-91 0h41m-91 0h42m8-46h41m8 0h42m7 0h42m-42-46h42"/><path fill="#066da5" d="m472 228s-18-17-55-11c-4-29-35-46-35-46s-29 35-8 74c-6 3-16 7-31 7H68c-5 19-5 145 133 145 99 0 173-46 208-130 52 4 63-39 63-39"/>
+	</svg>
+	Quick Reference for Docker CLI
+  </h1>
+  <div class="section">
+	  <h2 class="zow">Run a new Container</h2>
+	  <h3>Start a new Container from an Image ...</h3>
+	  <p>
+		<code>docker run <em>IMAGE</em></code>
+		<code><i>docker run nginx</i> </code>
+	  </p>
+	  <h3>...and assign it a name</h3>
+	  <p>
+		  <code> docker run --name <em>CONTAINER</em> <em>IMAGE</em></code>
+		  <code><i>docker run --name web nginx</i> </code>
+	  </p>
+	  <h3>...and map a port</h3>
+		  <code> docker run -p <em>HOSTPORT</em>:<em>CONTAINERPORT</em> </code>
+		  <code><i>docker run -p 8080:80 nginx</i> </code>
+	  <h3>...and map all ports</h3>
+		  <code>docker run -P <em>IMAGE</em></code>
+		  <code><i>docker run -P nginx </i></code>
+	  <h3>...and start container in background</h3>
+	  <code>docker run -d <em>IMAGE</em>
+		docker run -d nginx
+	  </code>
+	  <h3>...and assign it a hostname</h3>
+	  <code>docker run --hostname <em>HOSTNAME</em> <em>IMAGE</em>
+	docker run --hostname srv nginx</code>
+	  <h3>...and add a DNS entry</h3>
+	  <code>docker run --add-host <em>HOSTNAME</em>:<em>IP_ADDRESS</em> <em>IMAGE</em></code>
+  </div>
+  <div class="section">
+  <h2 class="zow">Manage Containers</h2>
+  <h3>Show a list of running containers</h3>
+  <code>docker ps</code>
+  <h3>Show a list of all containers</h3>
+  <code>docker ps -a</code>
+  <h3>Delete a container</h3>
+  <code>docker rm <em>CONTAINER</em>
+docker rm web</code>
+  <h3>Delete a running container</h3>
+  <code>docker rm -f <em>CONTAINER</em>
+docker rm -f web</code>
+  <h3>Delete stopped containers</h3>
+  <code>docker container prune</code>
+  <h3>Stop a running container</h3>
+  <code>docker stop <em>CONTAINER</em>
+docker stop web</code>
+  <h3>Start a stopped container</h3>
+  <code>docker start <em>CONTAINER</em>
+docker start web</code>
+  <h3>Copy a file from a container to the host</h3>
+  <code>docker cp <em>CONTAINER</em>:SOURCE TARGET
+docker cp web:/index.html index.html</code>
+  <h3>Copy a file from the host to a container</h3>
+  <code>docker cp TARGET <em>CONTAINER</em>:SOURCE
+docker cp index.html web:/index.html</code>
+  <h3>Start a shell inside a running container</h3>
+  <code>docker exec -it <em>CONTAINER</em> EXECUTABLE
+docker exec -it web bash</code>
+  <h3>Rename a container</h3>
+  <code>docker rename OLD_NAME NEW_NAME
+docker rename 096 web</code>
+  <h3>Create an image out of container</h3>
+  <code>docker commit <em>CONTAINER</em>
+docker commit web</code>
+  </div>
+  <div class="section">
+  <h2 class="zow">Manage Images</h2>
+  <h3>Download an image</h3>
+  <code>docker pull <em>IMAGE</em>[:TAG]
+docker pull nginx</code>
+  <h3>Upload an image to a repository</h3>
+  <code>docker push <em>IMAGE</em>
+docker push myimage:1.0</code>
+  <h3>Delete an image</h3>
+  <code>docker rmi <em>IMAGE</em></code>
+  <h3>Show a list of all images</h3>
+  <code>docker images</code>
+  <h3>Delete dangling images</h3>
+  <code>docker image prune</code>
+  <h3>Delete all unused images</h3>
+  <code>docker image prune -a</code>
+  <h3>Build an image from a Dockerfile</h3>
+  <code>docker build DIRECTORY
+docker build .</code>
+  <h3>Tag an image</h3>
+  <code>docker tag <em>IMAGE</em> NEWIMAGE
+docker tag ubuntu ubuntu:18.04</code>
+  <h3>Build and tag an image from a Dockerfile</h3>
+  <code>docker build -t <em>IMAGE</em> DIRECTORY
+docker build -t myimage .</code>
+  <h3>Save an image to .tar file</h3>
+  <code>docker save <em>IMAGE</em> > FILE
+docker save nginx > nginx.tar</code>
+  <h3>Load an image from a .tar file</h3>
+  <code>docker load -i TARFILE
+docker load -i nginx.tar</code>
+  </div>
+  <div class="section">
+  <h2 class="zow">Info &amp; Stats</h2>
+  <h3>Show the logs of a container</h3>
+  <code>docker logs <em>CONTAINER</em>
+docker logs web</code>
+  <h3>Show stats of running containers</h3>
+  <code>docker stats</code>
+  <h3>Show processes of container</h3>
+  <code>docker top <em>CONTAINER</em>
+docker top web</code>
+  <h3>Show installed docker version</h3>
+  <code>docker version</code>
+  <h3>Get detailed info about an object</h3>
+  <code>docker inspect NAME
+docker inspect nginx</code>
+  <h3>Show all modified files in container</h3>
+  <code>docker diff <em>CONTAINER</em>
+docker diff web</code>
+  <h3>Show mapped ports of a container</h3>
+  <code>docker port <em>CONTAINER</em>
+docker port web</code>
+  <h3>Map a local directory into the container</h3>
+  <code>docker run -v HOSTDIR:TARGETDIR <em>IMAGE</em>
+docker run -v /local/path:/container/path nginx</code>
+  <sup> * works with individual file paths too</sup>
+  <h3>Change the entrypoint</h3>
+  <code>docker run -it --entrypoint EXECUTABLE <em>IMAGE</em>
+docker run -it --entrypoint bash nginx</code>
+  </div>
+</body>
+</html>
